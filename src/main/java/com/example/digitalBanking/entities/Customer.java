@@ -2,6 +2,10 @@ package com.example.digitalBanking.entities;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,5 +27,6 @@ public class Customer {
 	private String name;
 	private String email;
 	@OneToMany(mappedBy = "customer")
+	@JsonProperty(access =JsonProperty.Access.WRITE_ONLY)
 	private List<BankAccount> bankAccounts;
 }

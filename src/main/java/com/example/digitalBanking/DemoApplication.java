@@ -11,6 +11,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import com.example.digitalBanking.dtos.BankAccountDTO;
+import com.example.digitalBanking.dtos.CustomerDTO;
 import com.example.digitalBanking.entities.BankAccount;
 import com.example.digitalBanking.entities.CurrentAccount;
 import com.example.digitalBanking.entities.Customer;
@@ -26,6 +28,7 @@ import com.example.digitalBanking.repositories.CustomerRepository;
 import com.example.digitalBanking.repositories.OperationRepository;
 import com.example.digitalBanking.services.BankService;
 
+
 @SpringBootApplication
 public class DemoApplication {
 
@@ -37,7 +40,7 @@ public class DemoApplication {
 	CommandLineRunner commandLineRunner(BankService bankService) {
 		return args->{
 			Stream.of("Youssef","Lili","Lina").forEach(name ->{
-				Customer customer =new Customer();
+				CustomerDTO customer =new CustomerDTO();
 				customer.setName(name);
 				customer.setEmail(name+ "gmail.com");
 				bankService.saveCostumer(customer);
@@ -47,27 +50,24 @@ public class DemoApplication {
 			bankService.listCustomers().forEach(customer->{
 				try {
 					bankService.saveCurrentBankAccount(Math.random()*999999, customer.getId(), 9000);
-					bankService.saveSavingBankAccount(Math.random()*213333,customer.getId() , 5.5);
-						
-						List<BankAccount> bankAccounts= bankService.bankAccountList();
-						for (BankAccount bankAccount : bankAccounts) {
-							for (int i = 0; i < 10; i++) {
-									
-								bankService.credit(bankAccount.getId(), "credit", Math.random()*1200000);
-								bankService.debit(bankAccount.getId(), "debit", Math.random()*80000);
-								
-							}
-						}
-						
+					bankService.saveSavingBankAccount(Math.random()*213333,customer.getId() , 5.5);	
 					
 				} catch (CustomerNotFoundException   e) {
 					e.printStackTrace();
-				} catch (BalanceNotSufficientException | BankAccountNotFoundException e) {
-					e.printStackTrace();
-				}
+				} 
 				
 			
 			});
+			List<BankAccountDTO> bankAccounts= bankService.bankAccountList();
+			for (BankAccountDTO bankAccount : bankAccounts) {
+				for (int i = 0; i < 10; i++) {
+						
+					bankService.credit(bankAccount.getId(), "credit", Math.random()*1200000);
+					bankService.debit(bankAccount.getId(), "debit", Math.random()*80000);
+					
+				}
+			}
+			
 		};
 	}
 	
