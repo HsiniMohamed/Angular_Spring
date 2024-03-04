@@ -11,4 +11,4 @@ import com.example.digitalBanking.entities.Operation;
 public interface OperationRepository extends JpaRepository<Operation, Long> {
 
 	List<Operation> findByBankAccountId(String accountId);
-	Page<Operation> findByBankAccountId(String accountId,Pageable pageable);}
+	Page<Operation> findByBankAccountIdOrderByDateOperationDesc(String accountId,Pageable pageable);}

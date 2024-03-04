@@ -3,7 +3,6 @@ package com.example.digitalBanking.services;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collector;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -206,7 +205,7 @@ public class BankServiceImpl implements BankService {
 	@Override
 	public AccountHistoryDTO getAccountHistoryPages(String accountId, int page, int size) throws BankAccountNotFoundException {
 		
-	Page<Operation> operations=	operationRepository.findByBankAccountId(accountId, PageRequest.of(page, size));
+	Page<Operation> operations=	operationRepository.findByBankAccountIdOrderByDateOperationDesc(accountId, PageRequest.of(page, size));
 		BankAccount bankAccount =bankAccountRepository.findById(accountId).orElseThrow(()->new BankAccountNotFoundException(accountId));
 		AccountHistoryDTO accountHistoryDTO =new AccountHistoryDTO();
 		List<OperationDTO> operationDTOs= operations.getContent().stream().map(operation->dtoMapper.fromOperation(operation)).toList();
@@ -217,6 +216,32 @@ public class BankServiceImpl implements BankService {
 		accountHistoryDTO.setPageSize(size);
 		accountHistoryDTO.setTotalPages(operations.getTotalPages());
 		return accountHistoryDTO;
+	}
+
+	@Override
+	public List<CustomerDTO> searchCustomers(String keyword) {
+		List<Customer> customers= customerRepository.searchCustomers(keyword);
+		List<CustomerDTO>customerDTOs =customers.stream().map(cust->dtoMapper.fromCustomer(cust)).toList();
+		return customerDTOs;
+	}
+
+	@Override
+	public List<BankAccountDTO> bankAccountListByCustomer(Long customerId) throws CustomerNotFoundException {
+		Customer customer =customerRepository.findById(customerId).orElse(null);
+
+		if (customer==null) {
+			throw new CustomerNotFoundException("Customer not found");
+		}		List<BankAccount> bankAccounts= bankAccountRepository.findByCustomer(customer);
+		List<BankAccountDTO> bankAccountDTOs =bankAccounts.stream().map(bankAccount->{
+			if(bankAccount instanceof SavingAccount) {
+				SavingAccount savingAccount =(SavingAccount) bankAccount;
+				return dtoMapper.fromSavingAccount(savingAccount);
+			}else {
+				CurrentAccount currentAccount=(CurrentAccount) bankAccount;
+				return dtoMapper.fromCurrentAccount(currentAccount);
+			}
+		}).toList();
+		return bankAccountDTOs;
 	}
 
 

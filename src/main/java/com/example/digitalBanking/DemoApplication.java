@@ -13,15 +13,12 @@ import org.springframework.context.annotation.Bean;
 
 import com.example.digitalBanking.dtos.BankAccountDTO;
 import com.example.digitalBanking.dtos.CustomerDTO;
-import com.example.digitalBanking.entities.BankAccount;
 import com.example.digitalBanking.entities.CurrentAccount;
 import com.example.digitalBanking.entities.Customer;
 import com.example.digitalBanking.entities.Operation;
 import com.example.digitalBanking.entities.SavingAccount;
 import com.example.digitalBanking.enums.AccountStatus;
 import com.example.digitalBanking.enums.OperationType;
-import com.example.digitalBanking.exceptions.BalanceNotSufficientException;
-import com.example.digitalBanking.exceptions.BankAccountNotFoundException;
 import com.example.digitalBanking.exceptions.CustomerNotFoundException;
 import com.example.digitalBanking.repositories.BankAccountRepository;
 import com.example.digitalBanking.repositories.CustomerRepository;

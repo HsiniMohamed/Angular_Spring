@@ -1,4 +1,4 @@
-package com.example.digitalBanking.services;
+package com.example.digitalBanking.dtos;
 
 import lombok.Data;
 
