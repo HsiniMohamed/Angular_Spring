@@ -2,13 +2,18 @@ package com.example.digitalBanking.security;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -24,6 +29,8 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 @Configuration
 @EnableWebSecurity
 public class SecurityConifg {
+	@Value("${jwt.secretKey}")
+	private String secretKey;
 	
 	@Bean
 	InMemoryUserDetailsManager inMemoryUserDetailsManager() {
@@ -53,15 +60,23 @@ public class SecurityConifg {
 	
 	@Bean
 	JwtEncoder jwtEncoder() {
-		String secretKey="1AZSXC4VWS3EDFR45HYJI765OLMPBV2D2E5TGVBHJUX0586HFGVN54KIRNCY4375HY";
+		//String secretKey="1AZSXC4VWS3EDFR45HYJI765OLMPBV2D2E5TGVBHJUX0586HFGVN54KIRNCY4375HY";
 		return new NimbusJwtEncoder(new ImmutableSecret<>(secretKey.getBytes()));
 	}
 	
 	@Bean 
 	JwtDecoder jwtDecoder() {
-		String secretKey="1AZSXC4VWS3EDFR45HYJI765OLMPBV2D2E5TGVBHJUX0586HFGVN54KIRNCY4375HY";
+		//String secretKey="1AZSXC4VWS3EDFR45HYJI765OLMPBV2D2E5TGVBHJUX0586HFGVN54KIRNCY4375HY";
 		SecretKeySpec secretKeySpec= new SecretKeySpec( secretKey.getBytes(),"RSA");
 		return NimbusJwtDecoder.withSecretKey(secretKeySpec).macAlgorithm(MacAlgorithm.HS512).build();
+	}
+	
+	@Bean
+	AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
+		DaoAuthenticationProvider daoAuthenticationProvider =new DaoAuthenticationProvider();
+		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+		daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+		return new ProviderManager(daoAuthenticationProvider);
 	}
 
 }
