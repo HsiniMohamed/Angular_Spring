@@ -25,7 +25,6 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin("*")
 public class BankAccountRestApi {
 
 	private BankService bankService;

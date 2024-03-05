@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin("*")
 public class SecurityController {
 	
 	@Autowired
@@ -48,8 +50,8 @@ public class SecurityController {
 				.build();
 		JwtEncoderParameters jwtEncoderParameters=
 				JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS512).build(),jwtClaimsSet);
-		String jwtAccess = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
-		return Map.of("accessToken",jwtAccess);
+		String jwt = jwtEncoder.encode(jwtEncoderParameters).getTokenValue();
+		return Map.of("accessToken",jwt);
 	}
 
 }
