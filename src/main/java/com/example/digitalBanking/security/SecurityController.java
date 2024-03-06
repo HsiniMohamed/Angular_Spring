@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin("*")
 public class SecurityController {
 	
 	@Autowired
@@ -44,7 +42,7 @@ public class SecurityController {
 		Instant instant=Instant.now();
 		JwtClaimsSet jwtClaimsSet=JwtClaimsSet.builder()
 				.issuedAt(instant)
-				.expiresAt(instant.plus(10,ChronoUnit.MINUTES))
+				.expiresAt(instant.plus(1,ChronoUnit.MINUTES))
 				.subject(username)
 				.claim("scope", scope)
 				.build();

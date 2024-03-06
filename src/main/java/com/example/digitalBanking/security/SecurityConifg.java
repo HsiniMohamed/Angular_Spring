@@ -1,5 +1,6 @@
 package com.example.digitalBanking.security;
 
+
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,9 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 
@@ -54,6 +58,7 @@ public class SecurityConifg {
 				.sessionManagement(sm->sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(ar->ar.requestMatchers("/auth/login/**").permitAll())
 				.authorizeHttpRequests(ar->ar.anyRequest().authenticated())
+				.cors(Customizer.withDefaults())
 				.csrf(csrf->csrf.disable())
 				//.httpBasic(Customizer.withDefaults())
 				.oauth2ResourceServer(oa->oa.jwt(Customizer.withDefaults()))
@@ -80,6 +85,17 @@ public class SecurityConifg {
 		daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
 		daoAuthenticationProvider.setUserDetailsService(userDetailsService);
 		return new ProviderManager(daoAuthenticationProvider);
+	}
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration corsConfiguration =new CorsConfiguration();
+		corsConfiguration.addAllowedOrigin("*");
+		corsConfiguration.addAllowedMethod("*");
+		corsConfiguration.addAllowedHeader("*");
+		//corsConfiguration.setExposedHeaders(List.of("x-auth-token"));
+		UrlBasedCorsConfigurationSource source=new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", corsConfiguration);
+		return  source;
 	}
 
 }
